@@ -1,5 +1,6 @@
 "use client";
 
+import { OneTapMorningStylist } from "@/components/stylist/OneTapMorningStylist";
 import { ClothingCard } from "@/components/wardrobe/ClothingCard";
 import { useWardrobe } from "@/context/WardrobeContext";
 import {
@@ -282,98 +283,8 @@ export default function DashboardPage() {
         })}
       </div>
 
-      {/* 3. TODAY'S MATCHED OUTFIT (ALIGNED 3-COLUMN GRID) */}
-      {featuredRec && (
-        <div className="rounded-[18px] bg-white dark:bg-[#121824] border border-slate-200/90 dark:border-slate-800 p-4 shadow-[0_2px_4px_rgba(0,0,0,0.12)] space-y-3.5">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[14.5px] font-bold text-[#090909] dark:text-white">
-                  Top Matched Outfit
-                </span>
-                <span className="px-2 py-0.5 rounded-[10px] bg-[#269238] text-white text-[12px] font-semibold">
-                  {featuredRec.breakdown.totalScore}% Match
-                </span>
-              </div>
-              <p className="text-[13px] text-[#666666] dark:text-slate-400 mt-0.5">
-                {featuredRec.breakdown.harmonyType} •{" "}
-                {featuredRec.top.mainColor.name} +{" "}
-                {featuredRec.bottom.mainColor.name}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setRecIndex((i) => i + 1)}
-              className="w-9 h-9 rounded-[10px] bg-[#f5f8ff] dark:bg-slate-800 text-[#0288d1] flex items-center justify-center flex-shrink-0"
-              aria-label="Next outfit suggestion"
-              title="Next matched outfit"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Equal 3-Column Outfit Row */}
-          <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
-            {[
-              { item: featuredRec.top, role: "Top" },
-              { item: featuredRec.bottom, role: "Bottom" },
-              ...(featuredRec.shoe
-                ? [{ item: featuredRec.shoe, role: "Shoes" }]
-                : []),
-            ].map(({ item, role }) => {
-              const url = getItemImageUrl(item);
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => openDetailModal(item)}
-                  className="cursor-pointer rounded-[12px] bg-[#f5f8ff] dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 p-2 flex flex-col justify-between"
-                >
-                  <div className="aspect-square w-full rounded-[10px] bg-white dark:bg-slate-800 overflow-hidden mb-1.5">
-                    {url && (
-                      <img
-                        src={url}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center justify-between gap-1 text-[11px] text-[#666666]">
-                      <span>{role}</span>
-                      <span
-                        className="w-2.5 h-2.5 rounded-full border border-black/20 flex-shrink-0"
-                        style={{ backgroundColor: item.mainColor.hex }}
-                      />
-                    </div>
-                    <div className="text-[13px] font-semibold text-[#090909] dark:text-white truncate">
-                      {item.name}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5 pt-1">
-            <button
-              type="button"
-              onClick={handleWearRecommendedToday}
-              className="h-10 px-4 rounded-[12px] bg-[#269238] hover:opacity-95 text-white text-[13.5px] font-semibold inline-flex items-center justify-center gap-1.5 shadow-[0_2px_4px_rgba(0,0,0,0.12)]"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>{alreadyWornToday ? "Log Look Again" : "Wear Today"}</span>
-            </button>
-
-            <Link
-              href={`/matcher?itemId=${featuredRec.top.id}`}
-              className="h-10 px-4 rounded-[12px] bg-[#f5f8ff] dark:bg-slate-800 text-[#0288d1] border border-[#0288d1]/25 text-[13.5px] font-semibold inline-flex items-center justify-center"
-            >
-              See All Matches
-            </Link>
-          </div>
-        </div>
-      )}
+      {/* 3. ONE-TAP MORNING STYLIST */}
+      <OneTapMorningStylist />
 
       {/* 4. MY DIGITAL CLOSET GRID */}
       <div className="space-y-3">
