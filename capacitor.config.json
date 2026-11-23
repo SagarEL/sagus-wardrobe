@@ -1,0 +1,8 @@
+{
+  "appId": "com.sagu.wardrobe",
+  "appName": "Sagu's Wardrobe",
+  "webDir": "out",
+  "server": {
+    "androidScheme": "https"
+  }
+}

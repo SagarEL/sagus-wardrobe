@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-text-primary: #090909;
+    --color-text-secondary: #ffffff;
+    --color-text-tertiary: #666666;
+    --color-text-inverse: #0288d1;
+    --color-surface-base: #ffffff;
+    --color-surface-raised: #269238;
+    --color-surface-strong: #f5f8ff;
+
+    --radius-xs: 10px;
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 25px;
+
+    --shadow-1: rgba(0, 0, 0, 0.12) 0px 2px 4px 0px;
+    --shadow-2: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+    --shadow-3: rgba(2, 136, 209, 0.18) 0px 6px 16px 0px;
+    --shadow-4: rgba(0, 0, 0, 0.14) 0px 1px 3px 0px;
+  }
+
+  .dark {
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #090909;
+    --color-text-tertiary: #a0aab8;
+    --color-text-inverse: #29b6f6;
+    --color-surface-base: #090909;
+    --color-surface-raised: #269238;
+    --color-surface-strong: #121824;
+  }
+
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    background-color: var(--color-surface-strong);
+    color: var(--color-text-primary);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: normal;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* WCAG 2.2 AA Focus-Visible Indicator */
+  *:focus-visible {
+    outline: 2px solid #0288d1;
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgba(2, 136, 209, 0.2);
+  }
+}
+
+/* Hide horizontal scrollbar on pill bars while preserving touch scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

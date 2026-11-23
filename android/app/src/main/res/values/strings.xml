@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Sagu\'s Wardrobe</string>
+    <string name="title_activity_main">Sagu\'s Wardrobe</string>
+    <string name="package_name">com.sagu.wardrobe</string>
+    <string name="custom_url_scheme">com.sagu.wardrobe</string>
+</resources>
