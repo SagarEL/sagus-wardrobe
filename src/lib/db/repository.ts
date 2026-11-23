@@ -167,11 +167,13 @@ export const wardrobeRepository = {
     };
     await db.put("images", record);
 
-    // Sync to Supabase in background
+    // Sync to Supabase - await so it is persisted in the cloud before clothing item points to it!
     if (cloudSync.isEnabled()) {
-      cloudSync.upsertRemoteImage(record).catch((err) =>
-        console.warn("Supabase image upload error:", err)
-      );
+      try {
+        await cloudSync.upsertRemoteImage(record);
+      } catch (err) {
+        console.warn("Supabase image upload error:", err);
+      }
     }
 
     return imageId;
@@ -202,13 +204,40 @@ export const wardrobeRepository = {
     return null;
   },
 
-  async getAllImagesMap(): Promise<Record<string, string>> {
+  async getAllImagesMap(requiredIds?: string[]): Promise<Record<string, string>> {
     const db = await getDb();
     const all = await db.getAll("images");
     const map: Record<string, string> = {};
     for (const img of all) {
       map[img.id] = img.dataUrl;
     }
+
+    if (cloudSync.isEnabled()) {
+      try {
+        if (requiredIds && requiredIds.length > 0) {
+          const missing = requiredIds.filter((id) => !map[id]);
+          if (missing.length > 0) {
+            const remoteImgs = await cloudSync.fetchRemoteImagesByIds(missing);
+            for (const rImg of remoteImgs) {
+              map[rImg.id] = rImg.dataUrl;
+              await db.put("images", rImg);
+            }
+          }
+        } else {
+          // If no specific IDs passed, fetch any remote images that might be missing locally
+          const remoteImgs = await cloudSync.fetchAllRemoteImages();
+          if (remoteImgs) {
+            for (const rImg of remoteImgs) {
+              map[rImg.id] = rImg.dataUrl;
+              await db.put("images", rImg);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Error syncing images with cloud:", err);
+      }
+    }
+
     return map;
   },
 

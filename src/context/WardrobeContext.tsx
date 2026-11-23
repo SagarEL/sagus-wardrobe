@@ -182,8 +182,12 @@ export function WardrobeProvider({ children }: { children: React.ReactNode }) {
     try {
       await wardrobeRepository.purgeLegacyMockData();
 
+      const loadedItems = await wardrobeRepository.getAllClothingItems();
+      const allNeededImageIds = Array.from(
+        new Set(loadedItems.flatMap((i) => i.imageIds || []))
+      );
+
       const [
-        loadedItems,
         loadedImages,
         loadedCategories,
         loadedOutfits,
@@ -194,8 +198,7 @@ export function WardrobeProvider({ children }: { children: React.ReactNode }) {
         loadedProfile,
         loadedSettings,
       ] = await Promise.all([
-        wardrobeRepository.getAllClothingItems(),
-        wardrobeRepository.getAllImagesMap(),
+        wardrobeRepository.getAllImagesMap(allNeededImageIds),
         wardrobeRepository.getCategories(),
         wardrobeRepository.getAllOutfits(),
         wardrobeRepository.getPairOverrides(),
@@ -727,6 +730,14 @@ export function WardrobeProvider({ children }: { children: React.ReactNode }) {
       if (!item) return null;
       const firstId = item.imageIds?.[0];
       const storedUrl = firstId ? imagesMap[firstId] : null;
+      if (!storedUrl && firstId) {
+        // Fetch on-demand from Supabase if not yet in state
+        wardrobeRepository.getImage(firstId).then((remoteUrl) => {
+          if (remoteUrl) {
+            setImagesMap((prev) => ({ ...prev, [firstId]: remoteUrl }));
+          }
+        });
+      }
       return resolveGarmentPhotoUrl(item, storedUrl);
     },
     [imagesMap]

@@ -162,6 +162,50 @@ export const cloudSync = {
     return data.data_url;
   },
 
+  async fetchRemoteImagesByIds(ids: string[]): Promise<ImageRecord[]> {
+    if (!ids || ids.length === 0) return [];
+    const supabase = getSupabase();
+    if (!supabase) return [];
+
+    const { data, error } = await supabase
+      .from("images")
+      .select("id, data_url, mime_type, created_at")
+      .in("id", ids);
+
+    if (error || !data) {
+      console.warn("Error fetching remote images by IDs:", error?.message);
+      return [];
+    }
+
+    return data.map((row: any) => ({
+      id: row.id,
+      dataUrl: row.data_url,
+      mimeType: row.mime_type,
+      createdAt: row.created_at,
+    }));
+  },
+
+  async fetchAllRemoteImages(): Promise<ImageRecord[] | null> {
+    const supabase = getSupabase();
+    if (!supabase) return null;
+
+    const { data, error } = await supabase
+      .from("images")
+      .select("id, data_url, mime_type, created_at");
+
+    if (error || !data) {
+      console.warn("Error fetching all remote images:", error?.message);
+      return null;
+    }
+
+    return data.map((row: any) => ({
+      id: row.id,
+      dataUrl: row.data_url,
+      mimeType: row.mime_type,
+      createdAt: row.created_at,
+    }));
+  },
+
   async upsertRemoteImage(record: ImageRecord): Promise<boolean> {
     const supabase = getSupabase();
     if (!supabase) return false;
@@ -228,6 +272,13 @@ export const cloudSync = {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "clothing_items" },
+        () => {
+          onChange();
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "images" },
         () => {
           onChange();
         }
